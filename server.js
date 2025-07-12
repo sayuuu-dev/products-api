@@ -282,6 +282,53 @@ app.delete("/api/suppliers/deleteAll/:id", (req, res, next) => {
         res.status(400).send(E);
     }
 });
+// Utility functions
+const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+const isValidCardNumber = (number) => /^\d{12}$/.test(number);
+
+// Register customer
+app.post("/api/customers", (req, res) => {
+    const {
+        name,
+        address,
+        email,
+        dateOfBirth,
+        gender,
+        age,
+        cardHolderName,
+        cardNumber,
+        expiryDate,
+        cvv
+    } = req.body;
+
+    // Validation
+    if (!isValidEmail(email)) {
+        return res.status(400).json({ error: "Invalid email address" });
+    }
+    if (!isValidCardNumber(cardNumber)) {
+        return res.status(400).json({ error: "Card number must be 12 digits" });
+    }
+
+    const sql = `
+        INSERT INTO customer 
+        (name, address, email, dateOfBirth, gender, age, cardHolderName, cardNumber, expiryDate, cvv)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    const values = [name, address, email, dateOfBirth, gender, age, cardHolderName, cardNumber, expiryDate, cvv];
+
+    db.run(sql, values, function (err) {
+        if (err) {
+            console.error(err);
+            return res.status(400).json({ error: "Failed to register customer" });
+        }
+
+        res.status(201).json({
+            message: `Customer ${name} has registered`,
+            customerId: this.lastID
+        });
+    });
+});
 
 
 // Root path
