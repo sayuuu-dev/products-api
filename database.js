@@ -50,6 +50,24 @@ let db = new sqlite3.Database(DBSOURCE, (err) => {
 
             }
         })
+        db.run(`CREATE TABLE customers (
+            customerId INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            address TEXT NOT NULL,
+            email TEXT NOT NULL,
+            dateOfBirth TEXT,
+            gender TEXT,
+            age INTEGER,
+            cardHolderName TEXT,
+            cardNumber TEXT,
+            expiryDate TEXT,
+            cvv TEXT
+            )`, (err) => {
+            if (err) {
+        // Table already created
+            } else {
+            var insert = 'INSERT INTO customers (customerId, name, address, email, dateOfBirth, gender, age, cardHolderName, cardNumber, expiryDate, cvv) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+            db.run(insert, ["Sayuri Sooriyapaksha", "345A, R.A De Mel Road, Colombo 3", "sayuri12345@gmail.com", "16/03/2002", "Female", 23, "Sayuri Sooriyapaksha", "1234123412341234", "10/26", "356"])
 
 
 
